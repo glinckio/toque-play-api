@@ -1,5 +1,5 @@
 export enum ProfileType {
-  ATHLETE = 'athlete',
-  CLUB = 'club',
-  ORGANIZATION = 'organization',
+  ATHLETE = 'ATHLETE',
+  CLUB = 'CLUB',
+  ORGANIZATION = 'ORGANIZATION',
 }

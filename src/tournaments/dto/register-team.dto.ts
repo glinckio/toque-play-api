@@ -1,7 +1,5 @@
-import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsString,
@@ -9,15 +7,8 @@ import {
 } from 'class-validator';
 import { Gender } from '../entities/gender.enum';
 import { Modality } from '../entities/modality.enum';
-
-class TeamMemberDto {
-  @IsString()
-  @IsNotEmpty()
-  fullName: string;
-
-  @IsEmail()
-  email: string;
-}
+import { Type } from 'class-transformer';
+import { TournamentMemberDto } from './tournament-member.dto';
 
 export class RegisterTeamDto {
   @IsString()
@@ -32,8 +23,12 @@ export class RegisterTeamDto {
   @IsNotEmpty()
   modality: Modality;
 
+  @IsString()
+  @IsNotEmpty()
+  cpf: string;
+
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TeamMemberDto)
-  members: TeamMemberDto[];
+  @Type(() => TournamentMemberDto)
+  members: TournamentMemberDto[];
 }

@@ -23,6 +23,17 @@ export class ProfilesGuard implements CanActivate {
       return false; // User not found or has no profiles, access denied
     }
 
-    return requiredProfiles.some((profile) => user.profiles.includes(profile));
+    // Convert user profiles to uppercase for case-insensitive comparison
+    const userProfiles = user.profiles.map((profile) => profile.toUpperCase());
+
+    // Check if the user has at least one of the required profiles
+    const hasProfile = requiredProfiles.some((profile) =>
+      userProfiles.includes(profile),
+    );
+    console.log('[ProfilesGuard] Required Profiles:', requiredProfiles);
+    console.log('[ProfilesGuard] User Profiles:', user.profiles);
+    console.log('[ProfilesGuard] Has required profile:', hasProfile);
+
+    return hasProfile;
   }
 }

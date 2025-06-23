@@ -32,6 +32,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('User not found.');
       }
 
+      console.log('[AuthGuard] User found:', JSON.stringify(user, null, 2));
       request.user = user; // Attach user full profile to the request
       return true;
     } catch (error) {

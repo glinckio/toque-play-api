@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TournamentCategories } from '../entities/tournament-category.entity';
+import { TournamentCategoriesDto } from './tournament-category.dto';
 
 export class CreateTournamentDto {
   @IsString()
@@ -14,6 +14,7 @@ export class CreateTournamentDto {
   name: string;
 
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @IsNumber()
@@ -26,6 +27,6 @@ export class CreateTournamentDto {
   date: string;
 
   @ValidateNested()
-  @Type(() => TournamentCategories)
-  categories: TournamentCategories;
+  @Type(() => TournamentCategoriesDto)
+  categories: TournamentCategoriesDto;
 }

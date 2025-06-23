@@ -36,6 +36,13 @@ export class TournamentsController {
     return this.tournamentsService.findAll();
   }
 
+  @Get('organizer/my-tournaments')
+  @UseGuards(AuthGuard, ProfilesGuard)
+  @Profiles(ProfileType.ORGANIZATION)
+  findOrganizerTournaments(@GetUser() user: User) {
+    return this.tournamentsService.findTournamentsByOrganizer(user.uid);
+  }
+
   @Post(':id/register-team')
   @UseGuards(AuthGuard, ProfilesGuard)
   @Profiles(ProfileType.ATHLETE)

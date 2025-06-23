@@ -1,5 +1,5 @@
 import { TournamentStatus } from './tournament-status.enum';
-import { TournamentCategories } from './tournament-category.entity';
+import { TournamentCategoriesDto } from '../dto/tournament-category.dto';
 
 export class Tournament {
   id: string;
@@ -9,6 +9,6 @@ export class Tournament {
   pricePerPerson: number;
   status: TournamentStatus;
   date: Date; // Using a single Date object for simplicity
-  categories: TournamentCategories;
+  categories: TournamentCategoriesDto;
   organizerId: string;
 }

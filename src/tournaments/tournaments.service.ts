@@ -54,12 +54,48 @@ export class TournamentsService {
     return doc.data() as Tournament;
   }
 
+  async findTournamentsByOrganizer(organizerId: string) {
+    const tournamentsSnapshot = await this.firestore
+      .collection('tournaments')
+      .where('organizerId', '==', organizerId)
+      .get();
+
+    if (tournamentsSnapshot.empty) {
+      return [];
+    }
+
+    const tournaments = tournamentsSnapshot.docs.map(
+      (doc) => doc.data() as Tournament,
+    );
+
+    const tournamentsWithTeams = await Promise.all(
+      tournaments.map(async (tournament) => {
+        const registrationsSnapshot = await this.firestore
+          .collection('tournaments')
+          .doc(tournament.id)
+          .collection('registrations')
+          .get();
+
+        const registrations = registrationsSnapshot.docs.map((doc) =>
+          doc.data(),
+        );
+
+        return {
+          ...tournament,
+          registrations,
+        };
+      }),
+    );
+
+    return tournamentsWithTeams;
+  }
+
   async registerTeam(
     tournamentId: string,
     captainId: string,
     registerTeamDto: RegisterTeamDto,
   ) {
-    const { gender, modality, members, teamName } = registerTeamDto;
+    const { gender, modality, members, teamName, cpf } = registerTeamDto;
 
     const tournament = await this.findOne(tournamentId);
     if (!tournament) {
@@ -105,20 +141,17 @@ export class TournamentsService {
     await registrationRef.doc(teamId).set({
       teamId,
       captainId,
+      captainCpf: cpf,
       teamName,
       members,
       gender,
       modality,
       registeredAt: new Date(),
-      paymentStatus: 'PENDING',
     });
 
-    const totalPrice = tournament.pricePerPerson * expectedTeamSize;
-
     return {
-      message: 'Team successfully registered. Proceed to payment.',
+      message: 'Team successfully registered!',
       teamId,
-      totalPrice,
     };
   }
 }

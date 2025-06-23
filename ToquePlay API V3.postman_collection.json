@@ -1,0 +1,208 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-4a5b-8c7d-9e8f7a6b5c4d",
+    "name": "ToquePlay API V3 (No Payments)",
+    "description": "Coleção para testar a API Toque Play sem o fluxo de pagamentos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1. Register User (Email/Password)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test-user-1@example.com\",\n    \"password\": \"password123\",\n    \"displayName\": \"Test User\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Cria um novo usuário e o loga automaticamente, retornando os dados do perfil e um token de acesso."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Social Login (Get Token)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"idToken\": \"PASTE_YOUR_FIREBASE_ID_TOKEN_HERE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/social-login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "social-login"]
+            },
+            "description": "Use o arquivo `get_firebase_token.html` para gerar um token de ID do Firebase (via Google, etc.) e cole aqui. Isso irá criar ou logar o usuário."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para criar e autenticar usuários."
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "3. Set User Profiles",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"profiles\": [\"ATHLETE\", \"ORGANIZATION\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/profiles",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profiles"]
+            },
+            "description": "Define os perfis de um usuário. Requer um token de autenticação. Use o token retornado pelo registro ou login. Perfis disponíveis: `ATHLETE`, `ORGANIZATION`, `CLUB`."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gerenciar dados do usuário."
+    },
+    {
+      "name": "Tournaments",
+      "item": [
+        {
+          "name": "4. Create Tournament",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Copa de Verão ToquePlay\",\n  \"date\": \"2024-12-21T10:00:00.000Z\",\n  \"location\": \"Praia de Copacabana, Rio de Janeiro\",\n  \"pricePerPerson\": 50,\n  \"categories\": {\n    \"MALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": true, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    },\n    \"FEMALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": false, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    },\n    \"MIXED\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": false, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tournaments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments"]
+            },
+            "description": "Cria um novo torneio. Requer autenticação com um usuário que tenha o perfil `ORGANIZATION`."
+          },
+          "response": []
+        },
+        {
+          "name": "5. List All Tournaments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tournaments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments"]
+            },
+            "description": "Lista todos os torneios criados, sem necessidade de autenticação."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Register a Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"teamName\": \"Os Vingadores da Areia\",\n    \"gender\": \"MALE\",\n    \"modality\": \"DOUBLES\",\n    \"cpf\": \"111.111.111-11\",\n    \"members\": [\n        {\n            \"name\": \"Nome do Parceiro\",\n            \"email\": \"parceiro@exemplo.com\",\n            \"cpf\": \"222.222.222-22\"\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tournaments/{{tournamentId}}/register-team",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments", "{{tournamentId}}", "register-team"]
+            },
+            "description": "Registra um time em um torneio. Requer autenticação com um usuário que tenha o perfil `ATHLETE`. O `tournamentId` deve ser pego da resposta da criação ou listagem de torneios. O número de `members` deve corresponder ao `teamSize` da categoria, menos 1 (o capitão)."
+          },
+          "response": []
+        },
+        {
+          "name": "7. List Organizer's Tournaments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tournaments/organizer/my-tournaments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments", "organizer", "my-tournaments"]
+            },
+            "description": "Lista todos os torneios de um organizador, incluindo os times registrados em cada um. Requer autenticação com um usuário que tenha o perfil `ORGANIZATION`."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "authToken",
+      "value": "YOUR_AUTH_TOKEN"
+    },
+    {
+      "key": "tournamentId",
+      "value": "YOUR_TOURNAMENT_ID"
+    }
+  ]
+}
