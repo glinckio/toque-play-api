@@ -1,98 +1,218 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏓 ToquePlay API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API para gerenciamento de torneios de tênis de mesa desenvolvida com NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Funcionalidades
 
-## Description
+- **Autenticação**: Login com email/senha e redes sociais (Firebase)
+- **Usuários**: Perfis de atletas e organizadores
+- **Torneios**: Criação, listagem e gerenciamento de torneios
+- **Pagamentos**: Integração com Mercado Pago PIX (com modo mock)
+- **Categorias**: Diferentes categorias e modalidades de torneio
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tecnologias
 
-## Project setup
+- **Framework**: NestJS
+- **Linguagem**: TypeScript
+- **Autenticação**: Firebase Admin SDK
+- **Pagamentos**: Mercado Pago API
+- **Deploy**: Vercel
 
-```bash
-$ npm install
-```
+## 📋 Pré-requisitos
 
-## Compile and run the project
+- Node.js 18+
+- npm ou yarn
+- Conta no Firebase
+- Conta no Mercado Pago (opcional)
+
+## 🔧 Instalação
 
 ```bash
-# development
-$ npm run start
+# Clonar repositório
+git clone <repository-url>
+cd toque-play-api
 
-# watch mode
-$ npm run start:dev
+# Instalar dependências
+npm install
 
-# production mode
-$ npm run start:prod
+# Configurar variáveis de ambiente
+cp env.example .env
+# Editar .env com suas configurações
 ```
 
-## Run tests
+## ⚙️ Configuração
+
+### Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+# Mercado Pago
+MERCADOPAGO_ENABLED=false
+MP_ACCESS_TOKEN=your_mercadopago_token_here
+
+# Firebase
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_PRIVATE_KEY=your_firebase_private_key
+FIREBASE_CLIENT_EMAIL=your_firebase_client_email
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:3000
+```
+
+### Firebase Setup
+
+1. Crie um projeto no [Firebase Console](https://console.firebase.google.com)
+2. Gere uma chave privada em **Project Settings > Service Accounts**
+3. Configure as variáveis de ambiente
+
+### Mercado Pago Setup
+
+1. Crie uma conta no [Mercado Pago](https://www.mercadopago.com.br)
+2. Obtenha o Access Token em **Developers > Credentials**
+3. Configure `MERCADOPAGO_ENABLED=true` e `MP_ACCESS_TOKEN`
+
+## 🚀 Execução
 
 ```bash
-# unit tests
-$ npm run test
+# Desenvolvimento
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
+# Produção
+npm run start:prod
 
-# test coverage
-$ npm run test:cov
+# Build
+npm run build
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🧪 Testes
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Testes unitários
+npm run test
+
+# Testes e2e
+npm run test:e2e
+
+# Cobertura de testes
+npm run test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📚 Documentação da API
 
-## Resources
+### Endpoints Principais
 
-Check out a few resources that may come in handy when working with NestJS:
+#### Autenticação
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- `POST /api/auth/login` - Login com email/senha
+- `POST /api/auth/social-login` - Login social
+- `GET /api/auth/profile` - Perfil do usuário
 
-## Support
+#### Usuários
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- `GET /api/users/profile` - Obter perfil
+- `PUT /api/users/profile` - Atualizar perfil
 
-## Stay in touch
+#### Torneios
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- `GET /api/tournaments` - Listar torneios
+- `POST /api/tournaments` - Criar torneio
+- `GET /api/tournaments/:id` - Obter torneio
+- `PUT /api/tournaments/:id` - Atualizar torneio
+- `DELETE /api/tournaments/:id` - Deletar torneio
 
-## License
+#### Pagamentos
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `POST /api/payments/pix` - Criar pagamento PIX
+- `GET /api/payments/mock/status` - Status do modo mock
+
+### Postman Collection
+
+Importe o arquivo `ToquePlay API V3.postman_collection.json` no Postman para testar todos os endpoints.
+
+## 🚀 Deploy
+
+### Vercel (Recomendado)
+
+1. **Conectar Repositório**:
+
+   - Acesse [Vercel Dashboard](https://vercel.com/dashboard)
+   - Importe seu repositório
+   - Framework Preset: `Other`
+
+2. **Configurar Variáveis**:
+
+   - Vá em **Settings > Environment Variables**
+   - Adicione todas as variáveis do arquivo `env.vercel.example`
+
+3. **Deploy Automático**:
+   - Push para `main` = deploy automático
+   - Acesse a URL fornecida pelo Vercel
+
+📖 **Guia Completo**: Veja [DEPLOY_GUIDE.md](./DEPLOY_GUIDE.md) para instruções detalhadas.
+
+### Outras Plataformas
+
+- **Railway**: Deploy direto do GitHub
+- **Heroku**: Configurar buildpacks
+- **DigitalOcean App Platform**: Deploy containerizado
+
+## 🔧 Desenvolvimento
+
+### Estrutura do Projeto
+
+```
+src/
+├── auth/           # Autenticação e autorização
+├── config/         # Configurações
+├── firebase/       # Integração Firebase
+├── payments/       # Sistema de pagamentos
+├── tournaments/    # Gerenciamento de torneios
+├── users/          # Gerenciamento de usuários
+└── main.ts         # Ponto de entrada
+```
+
+### Modo Mock
+
+Para desenvolvimento sem integração real:
+
+```env
+MERCADOPAGO_ENABLED=false
+```
+
+Isso ativa o modo mock que simula pagamentos PIX sem usar a API real.
+
+### Logs e Debug
+
+```bash
+# Modo debug
+npm run start:debug
+
+# Ver logs em produção
+# Configure logging adequado para sua plataforma
+```
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 🆘 Suporte
+
+- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Documentação**: [NestJS Docs](https://docs.nestjs.com)
+- **Comunidade**: [Discord NestJS](https://discord.gg/G7Qnnhy)
+
+## 🔗 Links Úteis
+
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Firebase Admin SDK](https://firebase.google.com/docs/admin)
+- [Mercado Pago API](https://www.mercadopago.com.br/developers)
+- [Vercel Documentation](https://vercel.com/docs)
