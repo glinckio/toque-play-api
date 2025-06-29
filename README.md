@@ -140,12 +140,18 @@ Importe o arquivo `ToquePlay API V3.postman_collection.json` no Postman para tes
    - Importe seu repositório
    - Framework Preset: `Other`
 
-2. **Configurar Variáveis**:
+2. **Configurar Build** ⚠️ **IMPORTANTE**:
+
+   - Build Command: `npm run build:vercel` (não `npm run build`)
+   - Output Directory: `dist` (será ignorado pelo vercel.json)
+   - Install Command: `npm install`
+
+3. **Configurar Variáveis**:
 
    - Vá em **Settings > Environment Variables**
    - Adicione todas as variáveis do arquivo `env.vercel.example`
 
-3. **Deploy Automático**:
+4. **Deploy Automático**:
    - Push para `main` = deploy automático
    - Acesse a URL fornecida pelo Vercel
 

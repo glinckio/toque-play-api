@@ -16,7 +16,7 @@
 4. Configure as seguintes opções:
    - **Framework Preset**: `Other`
    - **Root Directory**: `./` (padrão)
-   - **Build Command**: `npm run build`
+   - **Build Command**: `npm run build:vercel` ⚠️ **IMPORTANTE**
    - **Output Directory**: `dist` (será ignorado pelo vercel.json)
    - **Install Command**: `npm install`
 
@@ -48,7 +48,7 @@ Em **Settings > General**:
 
 - **Node.js Version**: `18.x` ou superior
 - **Build & Development Settings**:
-  - Build Command: `npm run build`
+  - Build Command: `npm run build:vercel` ⚠️ **CRÍTICO**
   - Output Directory: `dist` (será ignorado)
   - Install Command: `npm install`
 
@@ -95,6 +95,13 @@ No painel do Vercel:
 - **Deployments**: Ver logs de build e deploy
 
 ## 🛠️ Troubleshooting
+
+### Erro: "nest: command not found"
+
+**Solução**: Use o comando de build correto:
+
+- ✅ Build Command: `npm run build:vercel`
+- ❌ Build Command: `npm run build`
 
 ### Erro: "No Output Directory named 'public' found"
 
@@ -208,6 +215,7 @@ const API_URL =
 ## 🎯 Checklist de Deploy
 
 - [ ] Repositório conectado ao Vercel
+- [ ] **Build Command configurado como `npm run build:vercel`** ⚠️
 - [ ] Variáveis de ambiente configuradas
 - [ ] `vercel.json` criado
 - [ ] `main.ts` configurado com CORS
