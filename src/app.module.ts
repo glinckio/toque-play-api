@@ -15,6 +15,7 @@ import paymentConfig from './config/payment.config';
       isGlobal: true,
       load: [paymentConfig],
     }),
+    // FirebaseModule - será carregado condicionalmente
     FirebaseModule,
     AuthModule,
     UsersModule,
