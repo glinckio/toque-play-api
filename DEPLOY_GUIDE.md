@@ -103,6 +103,10 @@ No painel do Vercel:
 - ✅ Build Command: `npm run build:vercel`
 - ❌ Build Command: `npm run build`
 
+### Erro: "functions property cannot be used with builds property"
+
+**Solução**: O arquivo `vercel.json` já está configurado corretamente sem conflitos.
+
 ### Erro: "No Output Directory named 'public' found"
 
 **Solução**: O arquivo `vercel.json` já está configurado para resolver isso.
@@ -217,7 +221,7 @@ const API_URL =
 - [ ] Repositório conectado ao Vercel
 - [ ] **Build Command configurado como `npm run build:vercel`** ⚠️
 - [ ] Variáveis de ambiente configuradas
-- [ ] `vercel.json` criado
+- [ ] `vercel.json` criado (sem conflitos)
 - [ ] `main.ts` configurado com CORS
 - [ ] Deploy realizado com sucesso
 - [ ] Endpoints testados
