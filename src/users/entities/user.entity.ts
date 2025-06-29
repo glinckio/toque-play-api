@@ -7,4 +7,5 @@ export class User {
   photoURL?: string;
   profiles: ProfileType[];
   emailVerified: boolean;
+  pixKey?: string;
 }

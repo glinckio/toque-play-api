@@ -36,4 +36,12 @@ export class UsersService {
     const updatedUserDoc = await userRef.get();
     return updatedUserDoc.data() as User;
   }
+
+  async updatePixKey(uid: string, pixKey: string): Promise<User> {
+    const userRef = this.firestore.collection('users').doc(uid);
+    await userRef.update({ pixKey });
+
+    const updatedUserDoc = await userRef.get();
+    return updatedUserDoc.data() as User;
+  }
 }

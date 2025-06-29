@@ -1,16 +1,58 @@
 {
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-4a5b-8c7d-9e8f7a6b5c4d",
-    "name": "ToquePlay API V3 (No Payments)",
-    "description": "Coleção para testar a API Toque Play sem o fluxo de pagamentos.",
+    "name": "ToquePlay API V3 (Mercado Pago + Mock)",
+    "description": "Coleção para testar a API Toque Play com sistema de pagamentos PIX (Mercado Pago real e mock).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tournamentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "Authentication",
+      "name": "🔧 Setup & Configuration",
       "item": [
         {
-          "name": "1. Register User (Email/Password)",
+          "name": "1. Check Payment Mode Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/mock/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "mock", "status"]
+            },
+            "description": "Verifica se o sistema está em modo mock ou real. Use este endpoint para confirmar a configuração antes de testar."
+          },
+          "response": []
+        }
+      ],
+      "description": "Configuração inicial e verificação do modo de pagamento."
+    },
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "2. Register User (Email/Password)",
           "request": {
             "method": "POST",
             "header": [],
@@ -28,12 +70,12 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "register"]
             },
-            "description": "Cria um novo usuário e o loga automaticamente, retornando os dados do perfil e um token de acesso."
+            "description": "Cria um novo usuário e o loga automaticamente, retornando os dados do perfil e um token de acesso. Copie o token para a variável {{authToken}}."
           },
           "response": []
         },
         {
-          "name": "2. Social Login (Get Token)",
+          "name": "3. Social Login (Get Token)",
           "request": {
             "method": "POST",
             "header": [],
@@ -59,10 +101,10 @@
       "description": "Endpoints para criar e autenticar usuários."
     },
     {
-      "name": "Users",
+      "name": "👤 Users",
       "item": [
         {
-          "name": "3. Set User Profiles",
+          "name": "4. Set User Profiles",
           "request": {
             "method": "PATCH",
             "header": [
@@ -89,15 +131,44 @@
             "description": "Define os perfis de um usuário. Requer um token de autenticação. Use o token retornado pelo registro ou login. Perfis disponíveis: `ATHLETE`, `ORGANIZATION`, `CLUB`."
           },
           "response": []
+        },
+        {
+          "name": "5. Set PIX Key (Organizer)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"pixKey\": \"organizador@pix.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/pix-key",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "pix-key"]
+            },
+            "description": "Cadastra a chave PIX do organizador para receber pagamentos. Requer autenticação com perfil ORGANIZATION."
+          },
+          "response": []
         }
       ],
       "description": "Endpoints para gerenciar dados do usuário."
     },
     {
-      "name": "Tournaments",
+      "name": "🏆 Tournaments",
       "item": [
         {
-          "name": "4. Create Tournament",
+          "name": "6. Create Tournament (With PIX Payment)",
           "request": {
             "method": "POST",
             "header": [
@@ -109,7 +180,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Copa de Verão ToquePlay\",\n  \"date\": \"2024-12-21T10:00:00.000Z\",\n  \"location\": \"Praia de Copacabana, Rio de Janeiro\",\n  \"pricePerPerson\": 50,\n  \"categories\": {\n    \"MALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": true, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    },\n    \"FEMALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": false, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    },\n    \"MIXED\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2 },\n      \"QUARTETS\": { \"enabled\": false, \"teamSize\": 4 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6 }\n    }\n  }\n}",
+              "raw": "{\n  \"name\": \"Copa de Verão ToquePlay\",\n  \"description\": \"Torneio de verão na praia\",\n  \"numberOfTeams\": 16,\n  \"pricePerPerson\": 50,\n  \"date\": \"2024-12-21T10:00:00.000Z\",\n  \"categories\": {\n    \"MALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2, \"price\": 50.00 },\n      \"QUARTETS\": { \"enabled\": true, \"teamSize\": 4, \"price\": 80.00 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6, \"price\": 100.00 }\n    },\n    \"FEMALE\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2, \"price\": 50.00 },\n      \"QUARTETS\": { \"enabled\": false, \"teamSize\": 4, \"price\": 80.00 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6, \"price\": 100.00 }\n    },\n    \"MIXED\": {\n      \"DOUBLES\": { \"enabled\": true, \"teamSize\": 2, \"price\": 60.00 },\n      \"QUARTETS\": { \"enabled\": true, \"teamSize\": 4, \"price\": 90.00 },\n      \"SIXES\": { \"enabled\": false, \"teamSize\": 6, \"price\": 120.00 }\n    }\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -121,12 +192,12 @@
               "host": ["{{baseUrl}}"],
               "path": ["tournaments"]
             },
-            "description": "Cria um novo torneio. Requer autenticação com um usuário que tenha o perfil `ORGANIZATION`."
+            "description": "Cria um novo torneio e automaticamente gera um pagamento PIX para a taxa de publicação. Copie o tournamentId da resposta para usar nos próximos endpoints."
           },
           "response": []
         },
         {
-          "name": "5. List All Tournaments",
+          "name": "7. List Open Tournaments (For Athletes)",
           "request": {
             "method": "GET",
             "header": [],
@@ -135,12 +206,32 @@
               "host": ["{{baseUrl}}"],
               "path": ["tournaments"]
             },
-            "description": "Lista todos os torneios criados, sem necessidade de autenticação."
+            "description": "Lista apenas torneios ABERTOS (com pagamento aprovado) para atletas se inscreverem. Torneios pendentes de pagamento NÃO aparecem aqui."
           },
           "response": []
         },
         {
-          "name": "6. Register a Team",
+          "name": "8. List Organizer's Tournaments (All Status)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tournaments/organizer/my-tournaments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments", "organizer", "my-tournaments"]
+            },
+            "description": "Lista TODOS os torneios do organizador (incluindo pendentes de pagamento). Requer autenticação com perfil ORGANIZATION."
+          },
+          "response": []
+        },
+        {
+          "name": "9. Register a Team",
           "request": {
             "method": "POST",
             "header": [
@@ -164,45 +255,145 @@
               "host": ["{{baseUrl}}"],
               "path": ["tournaments", "{{tournamentId}}", "register-team"]
             },
-            "description": "Registra um time em um torneio. Requer autenticação com um usuário que tenha o perfil `ATHLETE`. O `tournamentId` deve ser pego da resposta da criação ou listagem de torneios. O número de `members` deve corresponder ao `teamSize` da categoria, menos 1 (o capitão)."
+            "description": "Registra um time em um torneio. Requer autenticação com um usuário que tenha o perfil `ATHLETE`. O `tournamentId` deve ser pego da resposta da criação ou listagem de torneios."
           },
           "response": []
         },
         {
-          "name": "7. List Organizer's Tournaments",
+          "name": "10. Get Tournament Registrations",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{authToken}}",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/tournaments/organizer/my-tournaments",
+              "raw": "{{baseUrl}}/payments/tournament/{{tournamentId}}/registrations",
               "host": ["{{baseUrl}}"],
-              "path": ["tournaments", "organizer", "my-tournaments"]
+              "path": [
+                "payments",
+                "tournament",
+                "{{tournamentId}}",
+                "registrations"
+              ]
             },
-            "description": "Lista todos os torneios de um organizador, incluindo os times registrados em cada um. Requer autenticação com um usuário que tenha o perfil `ORGANIZATION`."
+            "description": "Lista todas as inscrições de um torneio com status de pagamento."
           },
           "response": []
         }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
+      ],
+      "description": "Endpoints para gerenciar torneios e inscrições."
     },
     {
-      "key": "authToken",
-      "value": "YOUR_AUTH_TOKEN"
+      "name": "💳 Payments (PIX)",
+      "item": [
+        {
+          "name": "11. Create PIX Payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.0,\n  \"description\": \"Inscrição no torneio\",\n  \"orderId\": \"tournament-123\",\n  \"payerEmail\": \"comprador@email.com\",\n  \"payerFirstName\": \"João\",\n  \"payerLastName\": \"Silva\",\n  \"payerCpf\": \"12345678901\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/pix",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "pix"]
+            },
+            "description": "Cria um pagamento PIX. Copie o paymentId da resposta para usar nos próximos endpoints."
+          },
+          "response": []
+        },
+        {
+          "name": "12. Get Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/status/{{paymentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "status", "{{paymentId}}"]
+            },
+            "description": "Consulta o status de um pagamento específico."
+          },
+          "response": []
+        },
+        {
+          "name": "13. List All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/list",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "list"]
+            },
+            "description": "Lista todos os pagamentos. Pode filtrar por status e orderId usando query parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "14. Webhook (Simulate)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"payment\",\n  \"data\": {\n    \"id\": {{paymentId}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/webhook",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "webhook"]
+            },
+            "description": "Simula um webhook do Mercado Pago. Use o paymentId de um pagamento criado anteriormente."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gerenciar pagamentos PIX."
     },
     {
-      "key": "tournamentId",
-      "value": "YOUR_TOURNAMENT_ID"
+      "name": "🎭 Mock Mode (Development Only)",
+      "item": [
+        {
+          "name": "15. List Mock Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/mock/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "mock", "payments"]
+            },
+            "description": "Lista todos os pagamentos mock criados. Só funciona em modo mock."
+          },
+          "response": []
+        },
+        {
+          "name": "16. Approve Mock Payment",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/mock/approve/{{paymentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "mock", "approve", "{{paymentId}}"]
+            },
+            "description": "Aprova manualmente um pagamento mock. Só funciona em modo mock. Use o paymentId de um pagamento criado anteriormente."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints específicos para desenvolvimento e testes em modo mock."
     }
   ]
 }

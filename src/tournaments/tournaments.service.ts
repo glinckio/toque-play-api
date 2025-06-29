@@ -10,24 +10,45 @@ import { Tournament } from './entities/tournament.entity';
 import { TournamentStatus } from './entities/tournament-status.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { RegisterTeamDto } from './dto/register-team.dto';
+import { PaymentsService } from '../payments/payments.service';
 
 @Injectable()
 export class TournamentsService {
   private readonly firestore;
-  constructor(private readonly firebaseService: FirebaseService) {
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly paymentsService: PaymentsService,
+  ) {
     this.firestore = this.firebaseService.firestore;
   }
 
   async create(
     createTournamentDto: CreateTournamentDto,
     organizerId: string,
-  ): Promise<Tournament> {
+  ): Promise<any> {
+    // Defina o valor da taxa de publicação do torneio
+    const taxaPublicacao = 10.0; // Exemplo: R$ 10,00
+    const orderId = `tournament_${uuidv4()}`;
+    const descricao = `Taxa publicação torneio - ${createTournamentDto.name}`;
+
+    // Gerar pagamento PIX usando Mercado Pago
+    const pixPayment = await this.paymentsService.createPixPayment({
+      amount: taxaPublicacao,
+      description: descricao,
+      orderId,
+      payerEmail: 'organizador@toqueplay.com', // Pode ser dinâmico baseado no organizador
+      payerFirstName: 'Organizador',
+      payerLastName: 'ToquePlay',
+      payerCpf: '00000000000', // Pode ser dinâmico baseado no organizador
+    });
+
     const newTournament: Tournament = {
       id: uuidv4(),
       ...createTournamentDto,
       date: new Date(createTournamentDto.date),
       organizerId,
-      status: TournamentStatus.OPEN,
+      status: TournamentStatus.PENDING_PAYMENT,
+      paymentOrderId: orderId,
     };
 
     await this.firestore
@@ -35,10 +56,40 @@ export class TournamentsService {
       .doc(newTournament.id)
       .set(newTournament);
 
-    return newTournament;
+    return {
+      tournament: newTournament,
+      pixPayment,
+    };
   }
 
+  // Para atletas - só torneios abertos (pagos)
   async findAll(): Promise<Tournament[]> {
+    const snapshot = await this.firestore
+      .collection('tournaments')
+      .where('status', '==', TournamentStatus.OPEN)
+      .get();
+
+    if (snapshot.empty) {
+      return [];
+    }
+    return snapshot.docs.map((doc) => doc.data() as Tournament);
+  }
+
+  // Para organizadores - todos os seus torneios (incluindo pendentes)
+  async findAllForOrganizer(organizerId: string): Promise<Tournament[]> {
+    const snapshot = await this.firestore
+      .collection('tournaments')
+      .where('organizerId', '==', organizerId)
+      .get();
+
+    if (snapshot.empty) {
+      return [];
+    }
+    return snapshot.docs.map((doc) => doc.data() as Tournament);
+  }
+
+  // Para administradores - todos os torneios (incluindo pendentes)
+  async findAllForAdmin(): Promise<Tournament[]> {
     const snapshot = await this.firestore.collection('tournaments').get();
     if (snapshot.empty) {
       return [];

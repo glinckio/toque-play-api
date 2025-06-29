@@ -11,4 +11,6 @@ export class Tournament {
   date: Date; // Using a single Date object for simplicity
   categories: TournamentCategoriesDto;
   organizerId: string;
+  paymentTxid?: string;
+  paymentOrderId?: string;
 }
