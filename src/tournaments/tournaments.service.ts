@@ -158,7 +158,7 @@ export class TournamentsService {
     })) as Tournament[];
 
     // Para cada torneio, verifica se há inscrição com captainId = athleteId
-    const result = [];
+    const result: Array<Tournament & { registrations: any[] }> = [];
     for (const tournament of tournaments) {
       const registrationsSnapshot = await this.firestore
         .collection('tournaments')
