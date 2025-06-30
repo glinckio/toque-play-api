@@ -122,15 +122,17 @@ export class MockPaymentService {
       throw new Error('Pagamento não encontrado');
     }
 
-    this.mockPayments.set(paymentId, {
+    const updatedPayment = {
       ...payment,
       status: 'approved',
+      status_detail: 'accredited',
       updatedAt: new Date(),
-    });
+    };
+    this.mockPayments.set(paymentId, updatedPayment);
 
     this.logger.log(`Pagamento mock aprovado manualmente - ID: ${paymentId}`);
 
-    return this.getPaymentStatus(paymentId);
+    return updatedPayment;
   }
 
   // Método para listar pagamentos mock
