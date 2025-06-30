@@ -141,6 +141,42 @@ export class TournamentsService {
     return tournamentsWithTeams;
   }
 
+  async findTournamentsByAthlete(athleteId: string) {
+    // Busca todos os torneios abertos
+    const tournamentsSnapshot = await this.firestore
+      .collection('tournaments')
+      .where('status', '==', TournamentStatus.OPEN)
+      .get();
+
+    if (tournamentsSnapshot.empty) {
+      return [];
+    }
+
+    const tournaments = tournamentsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Tournament[];
+
+    // Para cada torneio, verifica se há inscrição com captainId = athleteId
+    const result = [];
+    for (const tournament of tournaments) {
+      const registrationsSnapshot = await this.firestore
+        .collection('tournaments')
+        .doc(tournament.id)
+        .collection('registrations')
+        .where('captainId', '==', athleteId)
+        .get();
+      if (!registrationsSnapshot.empty) {
+        // Pode retornar também os dados da inscrição, se desejar
+        const registrations = registrationsSnapshot.docs.map((doc) =>
+          doc.data(),
+        );
+        result.push({ ...tournament, registrations });
+      }
+    }
+    return result;
+  }
+
   async registerTeam(
     tournamentId: string,
     captainId: string,

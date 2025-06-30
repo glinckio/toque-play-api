@@ -57,4 +57,16 @@ export class TournamentsController {
       registerTeamDto,
     );
   }
+
+  @Get('my-tournaments')
+  @UseGuards(AuthGuard)
+  async myTournaments(@GetUser() user: User) {
+    if (user.profiles.includes(ProfileType.ORGANIZATION)) {
+      return this.tournamentsService.findTournamentsByOrganizer(user.uid);
+    } else if (user.profiles.includes(ProfileType.ATHLETE)) {
+      return this.tournamentsService.findTournamentsByAthlete(user.uid);
+    } else {
+      return [];
+    }
+  }
 }
