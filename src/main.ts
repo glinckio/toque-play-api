@@ -7,33 +7,49 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
 
+    // Middleware global para liberar OPTIONS antes dos guards
+    app.use((req, res, next) => {
+      if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+        res.header(
+          'Access-Control-Allow-Methods',
+          'GET,POST,PUT,DELETE,PATCH,OPTIONS',
+        );
+        res.header(
+          'Access-Control-Allow-Headers',
+          'Origin,X-Requested-With,Content-Type,Accept,Authorization,Cache-Control,Pragma',
+        );
+        res.header('Access-Control-Allow-Credentials', 'true');
+        return res.sendStatus(204);
+      }
+      next();
+    });
+
     // Configurar CORS para desenvolvimento e produção
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
-      // Desenvolvimento local
       'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:8080',
       'http://127.0.0.1:3000',
-      // Produção
+      'http://127.0.0.1:3001',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:8080',
       'https://toqueplay.vercel.app',
       'https://toqueplay-frontend.vercel.app',
     ];
 
     app.enableCors({
       origin: (origin, callback) => {
-        // Permitir requests sem origin (como mobile apps, Postman, etc.)
         if (!origin) {
           return callback(null, true);
         }
-
-        // Verificar se a origin está na lista de permitidas
         if (allowedOrigins.includes(origin)) {
           return callback(null, true);
         }
-
-        // Em desenvolvimento, permitir todas as origens
         if (process.env.NODE_ENV === 'development') {
           return callback(null, true);
         }
-
         console.log(`🚫 CORS blocked origin: ${origin}`);
         return callback(new Error('Not allowed by CORS'), false);
       },
