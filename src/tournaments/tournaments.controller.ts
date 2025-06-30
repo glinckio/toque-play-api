@@ -57,8 +57,8 @@ export class TournamentsController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.tournamentsService.findOne(id);
+  async findOne(@Param('id') id: string, @GetUser() user: User) {
+    return this.tournamentsService.findOneWithCaptainTeam(id, user.uid);
   }
 
   @Post(':id/register-team')

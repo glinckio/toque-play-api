@@ -241,4 +241,35 @@ export class TournamentsService {
       teamId,
     };
   }
+
+  async findOneWithCaptainTeam(tournamentId: string, userId: string) {
+    const doc = await this.firestore
+      .collection('tournaments')
+      .doc(tournamentId)
+      .get();
+    if (!doc.exists) {
+      throw new NotFoundException(
+        `Tournament with ID "${tournamentId}" not found`,
+      );
+    }
+    const tournament = doc.data() as Tournament;
+
+    // Busca o time do capitão (usuário logado)
+    const registrationsSnapshot = await this.firestore
+      .collection('tournaments')
+      .doc(tournamentId)
+      .collection('registrations')
+      .where('captainId', '==', userId)
+      .get();
+
+    let myTeam = null;
+    if (!registrationsSnapshot.empty) {
+      myTeam = registrationsSnapshot.docs[0].data();
+    }
+
+    return {
+      ...tournament,
+      myTeam, // null se não estiver inscrito, ou os dados do time se estiver
+    };
+  }
 }
