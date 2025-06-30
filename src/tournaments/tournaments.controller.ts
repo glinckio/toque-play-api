@@ -36,6 +36,12 @@ export class TournamentsController {
     return this.tournamentsService.findAll();
   }
 
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.tournamentsService.findOne(id);
+  }
+
   @Get('organizer/my-tournaments')
   @UseGuards(AuthGuard, ProfilesGuard)
   @Profiles(ProfileType.ORGANIZATION)

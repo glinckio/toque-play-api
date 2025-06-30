@@ -97,10 +97,10 @@ export class TournamentsService {
     return snapshot.docs.map((doc) => doc.data() as Tournament);
   }
 
-  async findOne(id: string): Promise<Tournament | null> {
+  async findOne(id: string): Promise<Tournament> {
     const doc = await this.firestore.collection('tournaments').doc(id).get();
     if (!doc.exists) {
-      return null;
+      throw new NotFoundException(`Tournament with ID "${id}" not found`);
     }
     return doc.data() as Tournament;
   }

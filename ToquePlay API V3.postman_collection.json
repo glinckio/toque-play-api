@@ -251,7 +251,27 @@
           "response": []
         },
         {
-          "name": "10. Register a Team",
+          "name": "10. Get Tournament by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tournaments/{{tournamentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments", "{{tournamentId}}"]
+            },
+            "description": "Busca um torneio específico pelo seu ID. Requer autenticação."
+          },
+          "response": []
+        },
+        {
+          "name": "11. Register Team in Tournament",
           "request": {
             "method": "POST",
             "header": [
@@ -280,7 +300,7 @@
           "response": []
         },
         {
-          "name": "11. Get Tournament Registrations",
+          "name": "12. Get Tournament Registrations",
           "request": {
             "method": "GET",
             "header": [],
@@ -297,15 +317,35 @@
             "description": "Lista todas as inscrições de um torneio com status de pagamento."
           },
           "response": []
+        },
+        {
+          "name": "13. List My Tournaments (Athlete/Organizer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tournaments/my-tournaments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tournaments", "my-tournaments"]
+            },
+            "description": "Lista os torneios do usuário logado. Se for Organizador, lista os torneios que ele criou. Se for Atleta, lista os torneios em que está inscrito."
+          },
+          "response": []
         }
       ],
-      "description": "Endpoints para gerenciar torneios e inscrições."
+      "description": "Endpoints para criar e gerenciar torneios e inscrições."
     },
     {
       "name": "💳 Payments (PIX)",
       "item": [
         {
-          "name": "12. Create PIX Payment",
+          "name": "14. Create PIX Payment",
           "request": {
             "method": "POST",
             "header": [],
@@ -328,7 +368,7 @@
           "response": []
         },
         {
-          "name": "13. Get Payment Status",
+          "name": "15. Get Payment Status",
           "request": {
             "method": "GET",
             "header": [],
@@ -342,7 +382,7 @@
           "response": []
         },
         {
-          "name": "14. List All Payments",
+          "name": "16. List All Payments",
           "request": {
             "method": "GET",
             "header": [],
@@ -356,7 +396,7 @@
           "response": []
         },
         {
-          "name": "15. Webhook (Simulate)",
+          "name": "17. Webhook (Simulate)",
           "request": {
             "method": "POST",
             "header": [],
@@ -385,7 +425,7 @@
       "name": "🎭 Mock Mode (Development Only)",
       "item": [
         {
-          "name": "16. List Mock Payments",
+          "name": "18. List Mock Payments",
           "request": {
             "method": "GET",
             "header": [],
@@ -399,7 +439,7 @@
           "response": []
         },
         {
-          "name": "17. Approve Mock Payment",
+          "name": "19. Approve Mock Payment",
           "request": {
             "method": "PUT",
             "header": [],
