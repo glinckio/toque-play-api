@@ -36,17 +36,29 @@ export class TournamentsController {
     return this.tournamentsService.findAll();
   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.tournamentsService.findOne(id);
-  }
-
   @Get('organizer/my-tournaments')
   @UseGuards(AuthGuard, ProfilesGuard)
   @Profiles(ProfileType.ORGANIZATION)
   findOrganizerTournaments(@GetUser() user: User) {
     return this.tournamentsService.findTournamentsByOrganizer(user.uid);
+  }
+
+  @Get('my-tournaments')
+  @UseGuards(AuthGuard)
+  async myTournaments(@GetUser() user: User) {
+    if (user.profiles.includes(ProfileType.ORGANIZATION)) {
+      return this.tournamentsService.findTournamentsByOrganizer(user.uid);
+    } else if (user.profiles.includes(ProfileType.ATHLETE)) {
+      return this.tournamentsService.findTournamentsByAthlete(user.uid);
+    } else {
+      return [];
+    }
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.tournamentsService.findOne(id);
   }
 
   @Post(':id/register-team')
@@ -62,17 +74,5 @@ export class TournamentsController {
       user.uid,
       registerTeamDto,
     );
-  }
-
-  @Get('my-tournaments')
-  @UseGuards(AuthGuard)
-  async myTournaments(@GetUser() user: User) {
-    if (user.profiles.includes(ProfileType.ORGANIZATION)) {
-      return this.tournamentsService.findTournamentsByOrganizer(user.uid);
-    } else if (user.profiles.includes(ProfileType.ATHLETE)) {
-      return this.tournamentsService.findTournamentsByAthlete(user.uid);
-    } else {
-      return [];
-    }
   }
 }
