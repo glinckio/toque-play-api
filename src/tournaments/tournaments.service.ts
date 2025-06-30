@@ -265,6 +265,21 @@ export class TournamentsService {
     let myTeam = null;
     if (!registrationsSnapshot.empty) {
       myTeam = registrationsSnapshot.docs[0].data();
+
+      // Buscar status do pagamento, se houver paymentId
+      if (myTeam.paymentId) {
+        const paymentDoc = await this.firestore
+          .collection('payments')
+          .doc(myTeam.paymentId)
+          .get();
+        if (paymentDoc.exists) {
+          myTeam.paymentStatus = paymentDoc.data().status;
+        } else {
+          myTeam.paymentStatus = null;
+        }
+      } else {
+        myTeam.paymentStatus = null;
+      }
     }
 
     return {
