@@ -104,9 +104,9 @@ npm run test:cov
 
 #### Autenticação
 
-- `POST /api/auth/login` - Login com email/senha
+- `POST /api/auth/register` - Registro com email/senha
 - `POST /api/auth/social-login` - Login social
-- `GET /api/auth/profile` - Perfil do usuário
+- `GET /api/auth/me` - Validar token e obter usuário autenticado
 
 #### Usuários
 

@@ -1,7 +1,16 @@
-import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  ValidationPipe,
+  Get,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SocialLoginDto } from './dto/social-login.dto';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -15,5 +24,11 @@ export class AuthController {
   @Post('social-login')
   socialLogin(@Body(new ValidationPipe()) socialLoginDto: SocialLoginDto) {
     return this.authService.socialLogin(socialLoginDto);
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard)
+  getMe(@Request() req) {
+    return this.authService.getMe(req.user);
   }
 }

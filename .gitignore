@@ -150,3 +150,4 @@ dist
 # Firebase
 firebase-service-account.json
 firebase-object-configuration.json
+.vercel

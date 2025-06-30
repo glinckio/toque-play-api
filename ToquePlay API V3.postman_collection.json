@@ -96,6 +96,26 @@
             "description": "Use o arquivo `get_firebase_token.html` para gerar um token de ID do Firebase (via Google, etc.) e cole aqui. Isso irá criar ou logar o usuário."
           },
           "response": []
+        },
+        {
+          "name": "4. Validate Token (Get Current User)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Valida o token do Firebase e retorna as informações do usuário autenticado. Use este endpoint para verificar se o token ainda é válido e obter dados atualizados do usuário."
+          },
+          "response": []
         }
       ],
       "description": "Endpoints para criar e autenticar usuários."
@@ -104,7 +124,7 @@
       "name": "👤 Users",
       "item": [
         {
-          "name": "4. Set User Profiles",
+          "name": "5. Set User Profiles",
           "request": {
             "method": "PATCH",
             "header": [
@@ -133,7 +153,7 @@
           "response": []
         },
         {
-          "name": "5. Set PIX Key (Organizer)",
+          "name": "6. Set PIX Key (Organizer)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -168,7 +188,7 @@
       "name": "🏆 Tournaments",
       "item": [
         {
-          "name": "6. Create Tournament (With PIX Payment)",
+          "name": "7. Create Tournament (With PIX Payment)",
           "request": {
             "method": "POST",
             "header": [
@@ -197,7 +217,7 @@
           "response": []
         },
         {
-          "name": "7. List Open Tournaments (For Athletes)",
+          "name": "8. List Open Tournaments (For Athletes)",
           "request": {
             "method": "GET",
             "header": [],
@@ -211,7 +231,7 @@
           "response": []
         },
         {
-          "name": "8. List Organizer's Tournaments (All Status)",
+          "name": "9. List Organizer's Tournaments (All Status)",
           "request": {
             "method": "GET",
             "header": [
@@ -231,7 +251,7 @@
           "response": []
         },
         {
-          "name": "9. Register a Team",
+          "name": "10. Register a Team",
           "request": {
             "method": "POST",
             "header": [
@@ -260,7 +280,7 @@
           "response": []
         },
         {
-          "name": "10. Get Tournament Registrations",
+          "name": "11. Get Tournament Registrations",
           "request": {
             "method": "GET",
             "header": [],
@@ -285,7 +305,7 @@
       "name": "💳 Payments (PIX)",
       "item": [
         {
-          "name": "11. Create PIX Payment",
+          "name": "12. Create PIX Payment",
           "request": {
             "method": "POST",
             "header": [],
@@ -308,7 +328,7 @@
           "response": []
         },
         {
-          "name": "12. Get Payment Status",
+          "name": "13. Get Payment Status",
           "request": {
             "method": "GET",
             "header": [],
@@ -322,7 +342,7 @@
           "response": []
         },
         {
-          "name": "13. List All Payments",
+          "name": "14. List All Payments",
           "request": {
             "method": "GET",
             "header": [],
@@ -336,7 +356,7 @@
           "response": []
         },
         {
-          "name": "14. Webhook (Simulate)",
+          "name": "15. Webhook (Simulate)",
           "request": {
             "method": "POST",
             "header": [],
@@ -365,7 +385,7 @@
       "name": "🎭 Mock Mode (Development Only)",
       "item": [
         {
-          "name": "15. List Mock Payments",
+          "name": "16. List Mock Payments",
           "request": {
             "method": "GET",
             "header": [],
@@ -379,7 +399,7 @@
           "response": []
         },
         {
-          "name": "16. Approve Mock Payment",
+          "name": "17. Approve Mock Payment",
           "request": {
             "method": "PUT",
             "header": [],

@@ -54,4 +54,10 @@ export class AuthService {
 
     return user;
   }
+
+  async getMe(user: any) {
+    // user já contém as informações do usuário autenticado
+    // vindas do AuthGuard que validou o token
+    return user;
+  }
 }
