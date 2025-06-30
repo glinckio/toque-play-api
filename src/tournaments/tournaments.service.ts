@@ -262,10 +262,11 @@ export class TournamentsService {
       .where('captainId', '==', userId)
       .get();
 
-    let myTeam = null;
+    let myTeam: any = null;
     if (!registrationsSnapshot.empty) {
       myTeam = registrationsSnapshot.docs[0].data();
-
+    }
+    if (myTeam) {
       // Buscar status do pagamento, se houver paymentId
       if (myTeam.paymentId) {
         const paymentDoc = await this.firestore
