@@ -67,16 +67,7 @@ export class PaymentsController {
 
   @Put('mock/approve/:paymentId')
   async approveMockPayment(@Param('paymentId') paymentId: string) {
-    if (!this.paymentsService.isMockMode()) {
-      throw new Error('Este endpoint só está disponível em modo mock');
-    }
-
-    const id = parseInt(paymentId, 10);
-    if (isNaN(id)) {
-      throw new Error('ID do pagamento inválido');
-    }
-
-    this.logger.log(`Aprovando pagamento mock: ${id}`);
+    const id = Number(paymentId);
     return this.paymentsService.approveMockPayment(id);
   }
 
