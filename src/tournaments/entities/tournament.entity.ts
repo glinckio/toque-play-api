@@ -13,4 +13,5 @@ export class Tournament {
   organizerId: string;
   paymentTxid?: string;
   paymentOrderId?: string;
+  paymentConfirmedAt?: Date;
 }

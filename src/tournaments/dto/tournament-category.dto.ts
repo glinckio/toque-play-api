@@ -25,6 +25,13 @@ export class TournamentCategoryDetailsDto {
     message: 'Price must be at least 0 if the category is enabled.',
   })
   price: number;
+
+  @IsNumber()
+  @ValidateIf((o) => o.enabled === true)
+  @Min(0, {
+    message: 'Registration fee must be at least 0 if the category is enabled.',
+  })
+  registrationFee: number;
 }
 
 export class TournamentModalitiesDto {

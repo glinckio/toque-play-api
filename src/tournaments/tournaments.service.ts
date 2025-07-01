@@ -224,6 +224,35 @@ export class TournamentsService {
       );
     }
 
+    // Criar pagamento para inscrição do time
+    const taxaInscricao = categoryInfo.registrationFee || 0; // Taxa de inscrição da categoria
+    const orderId = `team_registration_${uuidv4()}`;
+    const descricao = `Inscrição time ${teamName} - ${tournament.name} (${gender}/${modality})`;
+
+    let pixPayment: any = null;
+    let paymentId: number | null = null;
+
+    if (taxaInscricao > 0) {
+      // Buscar dados do usuário para o pagamento
+      const userDoc = await this.firestore
+        .collection('users')
+        .doc(captainId)
+        .get();
+      const userData = userDoc.exists ? userDoc.data() : null;
+
+      pixPayment = await this.paymentsService.createPixPayment({
+        amount: taxaInscricao,
+        description: descricao,
+        orderId,
+        payerEmail: userData?.email || 'atleta@toqueplay.com',
+        payerFirstName: userData?.firstName || 'Atleta',
+        payerLastName: userData?.lastName || 'ToquePlay',
+        payerCpf: cpf,
+      });
+
+      paymentId = pixPayment.id;
+    }
+
     const teamId = uuidv4();
     await registrationRef.doc(teamId).set({
       teamId,
@@ -234,11 +263,15 @@ export class TournamentsService {
       gender,
       modality,
       registeredAt: new Date(),
+      paymentId: paymentId,
+      paymentOrderId: orderId,
+      registrationFee: taxaInscricao,
     });
 
     return {
       message: 'Team successfully registered!',
       teamId,
+      pixPayment: taxaInscricao > 0 ? pixPayment : null,
     };
   }
 
@@ -266,21 +299,38 @@ export class TournamentsService {
     if (!registrationsSnapshot.empty) {
       myTeam = registrationsSnapshot.docs[0].data();
     }
+
     if (myTeam) {
-      // Buscar status do pagamento, se houver paymentId
+      // Verificar se o torneio foi pago pelo organizador
+      const tournamentPaymentConfirmed = tournament.paymentConfirmedAt != null;
+
+      // Buscar status do pagamento da inscrição do time, se houver paymentId
       if (myTeam.paymentId) {
         const paymentDoc = await this.firestore
           .collection('payments')
-          .doc(myTeam.paymentId)
+          .doc(myTeam.paymentId.toString())
           .get();
         if (paymentDoc.exists) {
-          myTeam.paymentStatus = paymentDoc.data().status;
+          const paymentData = paymentDoc.data();
+          myTeam.paymentStatus = paymentData?.status || 'pending';
+          myTeam.paymentStatusDetail =
+            paymentData?.statusDetail || 'pending_waiting_payment';
         } else {
-          myTeam.paymentStatus = null;
+          myTeam.paymentStatus = 'pending';
+          myTeam.paymentStatusDetail = 'payment_not_found';
         }
+      } else if (myTeam.registrationFee > 0) {
+        // Se tem taxa de inscrição mas não tem paymentId, significa que ainda não foi criado o pagamento
+        myTeam.paymentStatus = 'pending';
+        myTeam.paymentStatusDetail = 'payment_not_created';
       } else {
-        myTeam.paymentStatus = null;
+        // Se não tem taxa de inscrição, não precisa de pagamento
+        myTeam.paymentStatus = 'free';
+        myTeam.paymentStatusDetail = 'no_payment_required';
       }
+
+      // Adicionar informação sobre o status do pagamento do torneio
+      myTeam.tournamentPaymentConfirmed = tournamentPaymentConfirmed;
     }
 
     return {
