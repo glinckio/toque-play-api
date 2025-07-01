@@ -1,10 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../firebase/firebase.service';
 
 @Injectable()
 export class MockPaymentService {
   private readonly logger = new Logger(MockPaymentService.name);
   private mockPayments = new Map<number, any>();
+
+  constructor(private readonly firebaseService: FirebaseService) {}
 
   async createPixPayment(data: {
     amount: number;
@@ -116,10 +119,69 @@ export class MockPaymentService {
 
   // Método para simular aprovação manual de pagamento (útil para testes)
   async approvePayment(paymentId: number) {
-    const payment = this.mockPayments.get(paymentId);
+    this.logger.log(
+      `Tentando aprovar pagamento mock - ID: ${paymentId}, tipo: ${typeof paymentId}`,
+    );
+    this.logger.log(
+      `Pagamentos mock disponíveis: ${Array.from(this.mockPayments.keys()).join(', ')}`,
+    );
 
+    let payment = this.mockPayments.get(paymentId);
+
+    // Se não encontrar em memória, busca no Firebase
     if (!payment) {
-      throw new Error('Pagamento não encontrado');
+      this.logger.log(
+        `Pagamento não encontrado em memória, buscando no Firebase - ID: ${paymentId}`,
+      );
+      try {
+        const paymentDoc = await this.firebaseService.firestore
+          .collection('payments')
+          .doc(paymentId.toString())
+          .get();
+
+        if (!paymentDoc.exists) {
+          this.logger.error(
+            `Pagamento não encontrado no Firebase - ID: ${paymentId}`,
+          );
+          throw new Error('Pagamento não encontrado');
+        }
+
+        const firebaseData = paymentDoc.data();
+        if (!firebaseData) {
+          throw new Error('Dados do pagamento não encontrados no Firebase');
+        }
+
+        payment = {
+          id: paymentId,
+          status: firebaseData.status,
+          payer: {
+            email: firebaseData.payerEmail,
+            first_name: firebaseData.payerName?.split(' ')[0] || '',
+            last_name:
+              firebaseData.payerName?.split(' ').slice(1).join(' ') || '',
+            identification: {
+              type: 'CPF',
+              number: firebaseData.payerCpf,
+            },
+          },
+          transaction_amount: firebaseData.amount,
+          description: firebaseData.description,
+          orderId: firebaseData.orderId,
+          createdAt: firebaseData.createdAt?.toDate() || new Date(),
+        };
+
+        // Adiciona à memória para futuras consultas
+        this.mockPayments.set(paymentId, payment);
+        this.logger.log(
+          `Pagamento carregado do Firebase e adicionado à memória - ID: ${paymentId}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Erro ao buscar pagamento no Firebase - ID: ${paymentId}`,
+          error,
+        );
+        throw new Error('Pagamento não encontrado');
+      }
     }
 
     const updatedPayment = {
